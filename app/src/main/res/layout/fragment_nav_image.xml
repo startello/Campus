@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/navigation_drawer_width"
+    android:layout_height="@dimen/navigation_drawer_image_height"
+    android:layout_marginBottom="8dp">
+
+    <ImageView
+        android:id="@+id/nav_bg"
+        android:src="@drawable/nav_drawer_image"
+        android:layout_width="@dimen/navigation_drawer_width"
+        android:layout_height="@dimen/navigation_drawer_image_height"
+        android:scaleType="fitXY"/>
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/app_bar_top_padding"
+        android:layout_width="@dimen/navigation_drawer_width"
+        android:layout_height="@dimen/navigation_drawer_image_height"
+        android:orientation="vertical">
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/nav_user_image"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"/>
+
+        <TextView
+            android:id="@+id/nav_user_name"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/text_icon"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:ellipsize="end"/>
+
+        <TextView
+            android:id="@+id/nav_user_info"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/divider"
+            android:textSize="14sp"
+            android:singleLine="true"
+            android:ellipsize="end"/>
+    </LinearLayout>
+</FrameLayout>

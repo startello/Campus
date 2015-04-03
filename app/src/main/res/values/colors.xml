@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#2196F3</color>
+    <color name="selection">#999999</color>
+    <color name="accent">#FFC107</color>
+    <color name="accent_dark">#FFC107</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#727272</color>
+    <color name="divider">#B6B6B6</color>
+    <color name="text_white_secondary">#EEEEEE</color>
+    <color name="text_icon">#FFFFFF</color>
+    <color name="menu_item_checked">#33999999</color>
+    <color name="menu_item_unchecked">#00999999</color>
+    <drawable name="menu_item_transition">#33999999</drawable>
+</resources>

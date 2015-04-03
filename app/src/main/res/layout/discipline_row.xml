@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/discipline_container"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:orientation="vertical">
+
+    <com.balysv.materialripple.MaterialRippleLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        app:mrl_rippleAlpha="0.2"
+        app:mrl_rippleColor="#999999"
+        app:mrl_rippleDelayClick="false">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="72dp">
+
+            <ImageView
+                android:id="@+id/discipline_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="72dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="center_vertical"
+                android:alpha="1"
+                android:contentDescription="Item icon"
+                android:paddingEnd="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingStart="16dp"
+                android:scaleType="center" />
+
+            <TextView
+                android:id="@+id/discipline_name"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginLeft="72dp"
+                android:layout_marginStart="72dp"
+                android:layout_marginRight="56dp"
+                android:layout_marginEnd="56dp"
+                android:fontFamily="sans-serif-regular"
+                android:gravity="bottom"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:textStyle="normal"
+                android:typeface="sans"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+
+            <TextView
+                android:id="@+id/discipline_info"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="72dp"
+                android:layout_marginStart="72dp"
+                android:layout_marginRight="56dp"
+                android:layout_marginEnd="56dp"
+                android:fontFamily="sans-serif-regular"
+                android:gravity="top"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:textStyle="normal"
+                android:typeface="sans"
+                android:ellipsize="end"
+                android:singleLine="true"/>
+        </RelativeLayout>
+    </com.balysv.materialripple.MaterialRippleLayout>
+    <com.balysv.materialripple.MaterialRippleLayout
+        android:id="@+id/list_item_info"
+        android:layout_width="56dp"
+        android:layout_height="72dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        app:mrl_rippleDelayClick="false"
+        app:mrl_rippleHover="true"
+        app:mrl_rippleColor="@color/selection"
+        app:mrl_rippleAlpha="0.2">
+        <ImageView
+            android:id="@+id/list_item_info_icon"
+            android:layout_width="56dp"
+            android:layout_height="72dp"
+            android:layout_gravity="center"
+            android:alpha="0.10"
+            android:contentDescription="Info"
+            android:scaleType="center"
+            android:src="@drawable/ic_info_black_24dp" />
+    </com.balysv.materialripple.MaterialRippleLayout>
+    <FrameLayout
+        style="@style/horizontal_line"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="0dp"
+        android:layout_marginStart="0dp" />
+</RelativeLayout>

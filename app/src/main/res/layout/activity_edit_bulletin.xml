@@ -1,0 +1,184 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/text_icon"
+    tools:context="ua.kpi.kbis.campus.EditBulletin">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="48dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/app_bar_top_padding">
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:id="@+id/edit_bulletin_caption"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="@dimen/actionBarSize"
+                    android:hint="Тема"
+                    android:paddingTop="12dp"
+                    android:singleLine="true"
+                    android:textCursorDrawable="@drawable/color_cursor_black_2dp"
+                    android:textSize="24sp"
+                    app:met_hideUnderline="true"
+                    app:met_primaryColor="@color/divider"
+                    app:met_singleLineEllipsis="true" />
+
+                <FrameLayout style="@style/horizontal_line" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginRight="16dp"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_group_grey600_24dp" />
+
+                    <com.balysv.materialripple.MaterialRippleLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="56dp"
+                        app:mrl_rippleAlpha="0.2"
+                        app:mrl_rippleColor="@color/selection"
+                        app:mrl_rippleDelayClick="false"
+                        app:mrl_rippleHover="true">
+
+                        <TextView
+                            android:id="@+id/edit_bulletin_available_for"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:gravity="center_vertical"
+                            android:text="Доступно для"
+                            android:textColor="@color/text_primary"
+                            android:textSize="16dp" />
+                    </com.balysv.materialripple.MaterialRippleLayout>
+                </LinearLayout>
+
+                <FrameLayout
+                    style="@style/horizontal_line"
+                    android:layout_marginLeft="72dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginRight="16dp"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_event_grey600_24dp" />
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <com.balysv.materialripple.MaterialRippleLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="48dp"
+                            app:mrl_rippleAlpha="0.2"
+                            app:mrl_rippleColor="@color/selection"
+                            app:mrl_rippleDelayClick="false"
+                            app:mrl_rippleHover="true">
+
+                            <TextView
+                                android:id="@+id/edit_bulletin_from"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:gravity="center_vertical"
+                                android:text="Від"
+                                android:textColor="@color/text_primary"
+                                android:textSize="16dp" />
+                        </com.balysv.materialripple.MaterialRippleLayout>
+
+                        <com.balysv.materialripple.MaterialRippleLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="48dp"
+                            app:mrl_rippleAlpha="0.2"
+                            app:mrl_rippleColor="@color/selection"
+                            app:mrl_rippleDelayClick="false"
+                            app:mrl_rippleHover="true">
+
+                            <TextView
+                                android:id="@+id/edit_bulletin_to"
+                                android:layout_width="match_parent"
+                                android:layout_height="48dp"
+                                android:gravity="center_vertical"
+                                android:text="До"
+                                android:textColor="@color/text_primary"
+                                android:textSize="16dp" />
+                        </com.balysv.materialripple.MaterialRippleLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <FrameLayout
+                    style="@style/horizontal_line"
+                    android:layout_marginLeft="72dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_subject_grey600_24dp" />
+
+                    <com.rengwuxian.materialedittext.MaterialEditText
+                        android:id="@+id/edit_bulletin_text"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginTop="8dp"
+                        android:hint="Текст"
+                        android:singleLine="false"
+                        android:textCursorDrawable="@drawable/color_cursor_black"
+                        android:textSize="16sp"
+                        app:met_hideUnderline="true"
+                        app:met_primaryColor="@color/divider" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
+        <FrameLayout style="@style/horizontal_line" />
+        <com.gc.materialdesign.views.ButtonFlat
+            android:id="@+id/action_remove"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:background="@color/text_primary"
+            android:text="@string/action_remove" />
+        </LinearLayout>
+    </RelativeLayout>
+    <include
+        android:id="@+id/app_bar_edit_bulletin"
+        layout="@layout/app_bar_edit_bulletin"/>
+</FrameLayout>

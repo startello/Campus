@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.balysv.materialripple.MaterialRippleLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/pager_tab_ripple"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        app:mrl_rippleAlpha="0.6"
+        app:mrl_rippleColor="@color/accent"
+        app:mrl_rippleDelayClick="false">
+
+        <TextView
+            android:id="@+id/pager_tab_text"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:textColor="@color/text_icon"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            android:typeface="sans" />
+    </com.balysv.materialripple.MaterialRippleLayout>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Campus</string>
+    <string name="title_activity_main">Campus</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Налаштування</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="drawer_open">Відкрити</string>
+    <string name="drawer_close">Закрити</string>
+    <string name="action_search">Пошук</string>
+    <string name="error_invalid_login">Невірний логін</string>
+    <string name="prompt_login">Логін</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="action_sign_in">Вхід</string>
+    <string name="action_sign_in_short">Вхід</string>
+    <string name="error_invalid_password">Пароль занадто короткий</string>
+    <string name="error_incorrect_password">Невірний пароль</string>
+    <string name="error_field_required">Обов\'язкове поле</string>
+    <string name="title_activity_login">Campus</string>
+    <string name="action_logout">Вийти</string>
+    <string name="title_activity_add_bulletin">Нове оголошення</string>
+    <string name="action_add">Додати</string>
+    <string name="title_activity_view_bulletin">Перегляд</string>
+    <string name="title_activity_edit_bulletin">Редагувати</string>
+    <string name="action_save">Зберегти</string>
+    <string name="action_remove">Видалити</string>
+    <string name="title_main_page_fragment">Головна</string>
+    <string name="title_messenger_fragment">Повідомлення</string>
+    <string name="title_schedule_fragment">Розклад</string>
+    <string name="title_disciplines_fragment">Методичне забезпечення</string>
+    <string name="title_control_fragment">Поточний контоль</string>
+    <string name="title_activity_view_current_user">ViewCurrentUser</string>
+</resources>
