@@ -2,28 +2,26 @@ package ua.kpi.kbis.campus;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.Set;
-import java.util.TreeSet;
 
 
 /**
@@ -48,6 +46,12 @@ public class DisciplinesFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -82,13 +86,13 @@ public class DisciplinesFragment extends Fragment {
                 ((MainActivity) getActivity()).moveToolbar(dy);
             }
         });
-        mSwipeRefreshLayout.setProgressViewOffset(false, (int) (getResources().getDimension(R.dimen.app_bar_top_padding)) , (int) (getResources().getDimension(R.dimen.app_bar_top_padding)
-                + getResources().getDimension(R.dimen.actionBarSize))+48);
+        mSwipeRefreshLayout.setProgressViewOffset(false, (int) (getResources().getDimension(R.dimen.app_bar_top_padding)), (int) (getResources().getDimension(R.dimen.app_bar_top_padding)
+                + getResources().getDimension(R.dimen.actionBarSize)) + 48);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.d("lol","refreshing");
+                Log.d("lol", "refreshing");
                 //mDiscTask.cancel(true);
                 mDiscTask = new DisciplinesLoadTask();
                 mDiscTask.execute((Void) null);
@@ -108,6 +112,7 @@ public class DisciplinesFragment extends Fragment {
 
     public class DisciplinesLoadTask extends AsyncTask<Void, Void, Boolean> {
         private JSONArray disciplines = new JSONArray();
+
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
@@ -131,7 +136,7 @@ public class DisciplinesFragment extends Fragment {
             if (success) {
                 try {
                     MainActivity.currentUser.put("disciplines", disciplines);
-                    MainActivity.prefs.edit().putString(MainActivity.prefs.getString("login",null),MainActivity.currentUser.toString()).commit();
+                    MainActivity.prefs.edit().putString(MainActivity.prefs.getString("userId", null), MainActivity.currentUser.toString()).commit();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -146,4 +151,31 @@ public class DisciplinesFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        MenuInflater menuInflater = getActivity().getMenuInflater();
+        menuInflater.inflate(R.menu.menu_main_activity, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                mAdapter.getFilter().filter(s);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                mAdapter.getFilter().filter(s);
+                return true;
+            }
+        });
+    }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
 }

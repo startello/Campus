@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#2196F3</color>
+    <color name="primary">#009688</color>
     <color name="selection">#999999</color>
-    <color name="accent">#FFC107</color>
-    <color name="accent_dark">#FFC107</color>
+    <color name="accent">#FF5722</color>
+    <color name="accent_dark">#BF360C</color>
+    <color name="accent_light">#FFCCBC</color>
     <color name="text_primary">#212121</color>
     <color name="text_secondary">#727272</color>
     <color name="divider">#B6B6B6</color>

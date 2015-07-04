@@ -1,24 +1,26 @@
 package ua.kpi.kbis.campus;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -38,15 +40,15 @@ import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends ActionBarActivity {
+    public static Toolbar mToolbar;
+    public static ActionBarDrawerToggle mDrawerToggle;
+    public static Fragment currentFragment;
     static DrawerLayout mDrawerLayout;
     static DrawerLayout mInfoDrawerLayout;
     static ActionBarDrawerToggle mInfoDrawerToggle;
     static String sessionId;
     static SharedPreferences prefs;
     static JSONObject currentUser;
-    public static Toolbar mToolbar;
-    public static ActionBarDrawerToggle mDrawerToggle;
-    public static Fragment currentFragment;
     private ArrayList<NavMenuItem> menuList;
     private RecyclerView mRecyclerView;
     private MenuAdapter mAdapter;
@@ -55,21 +57,22 @@ public class MainActivity extends ActionBarActivity {
     private JSONParser jsonParser = new JSONParser();
     private GetSessionIdTask mSessionIdTask;
     private View mLogout;
+    private View mToolbarContainer;
 
     public void showToolbar() {
-        mToolbar.animate().cancel();
-        mToolbar.animate().translationY(0).setDuration(100);
+        mToolbarContainer.animate().cancel();
+        mToolbarContainer.animate().translationY(0).setDuration(100);
         //mFragmentContainer.setPadding(0, mToolbar.getHeight(), 0, 0);
     }
 
     public void hideToolbar() {
-        mToolbar.animate().cancel();
-        mToolbar.animate().translationY(-mToolbar.getHeight()).setDuration(100);
+        mToolbarContainer.animate().cancel();
+        mToolbarContainer.animate().translationY(-mToolbarContainer.getHeight()).setDuration(100);
         //mFragmentContainer.setPadding(0,0,0,0);
     }
 
     public void finishMoveToolbar() {
-        if (mToolbar.getTranslationY() > -mToolbar.getHeight() / 2) {
+        if (mToolbarContainer.getTranslationY() > -mToolbarContainer.getHeight() / 2) {
             showToolbar();
         } else {
             hideToolbar();
@@ -77,20 +80,20 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void moveToolbar(int dy) {
-        mToolbar.animate().cancel();
-        if ((dy > 0) && (mToolbar.getTranslationY() + mToolbar.getHeight() > 0)) {
-            if (mToolbar.getTranslationY() + mToolbar.getHeight() - dy < 0) {
-                mToolbar.setTranslationY(-mToolbar.getHeight());
+        mToolbarContainer.animate().cancel();
+        if ((dy > 0) && (mToolbarContainer.getTranslationY() + mToolbarContainer.getHeight() > 0)) {
+            if (mToolbarContainer.getTranslationY() + mToolbarContainer.getHeight() - dy < 0) {
+                mToolbarContainer.setTranslationY(-mToolbarContainer.getHeight());
             } else {
-                mToolbar.setTranslationY(mToolbar.getTranslationY() - dy);
+                mToolbarContainer.setTranslationY(mToolbarContainer.getTranslationY() - dy);
             }
         }
-        if ((dy < 0) && (mToolbar.getTranslationY() < 0)) {
-            if (mToolbar.getTranslationY() - dy > 0) {
-                mToolbar.setTranslationY(0);
+        if ((dy < 0) && (mToolbarContainer.getTranslationY() < 0)) {
+            if (mToolbarContainer.getTranslationY() - dy > 0) {
+                mToolbarContainer.setTranslationY(0);
 
             } else {
-                mToolbar.setTranslationY(mToolbar.getTranslationY() - dy);
+                mToolbarContainer.setTranslationY(mToolbarContainer.getTranslationY() - dy);
             }
         }
         //mFragmentContainer.setPadding(0, (int)( mToolbar.getHeight() + mToolbar.getTranslationY()), 0, 0);
@@ -114,7 +117,7 @@ public class MainActivity extends ActionBarActivity {
         MainActivity.prefs = new ObscuredSharedPreferences(
                 this, this.getSharedPreferences("LOCAL_DATA", Context.MODE_PRIVATE));
         try {
-            currentUser = new JSONObject(prefs.getString(prefs.getString("login",null),null));
+            currentUser = new JSONObject(prefs.getString(prefs.getString("userId", null), null));
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -178,10 +181,10 @@ public class MainActivity extends ActionBarActivity {
 
         menuList = new ArrayList<NavMenuItem>();
         menuList.add(new NavMenuItem(getResources().getString(R.string.title_main_page_fragment), R.drawable.ic_school_grey600_24dp, new MainPageFragment()));
-        menuList.add(new NavMenuItem(getResources().getString(R.string.title_messenger_fragment), R.drawable.ic_messenger_grey600_24dp, new MessengerFragment()));
+        //menuList.add(new NavMenuItem(getResources().getString(R.string.title_messenger_fragment), R.drawable.ic_messenger_grey600_24dp, new MessengerFragment()));
         menuList.add(new NavMenuItem(getResources().getString(R.string.title_schedule_fragment), R.drawable.ic_event_note_grey600_24dp, new ScheduleFragment()));
         menuList.add(new NavMenuItem(getResources().getString(R.string.title_disciplines_fragment), R.drawable.ic_book_grey600_24dp, new DisciplinesFragment()));
-        menuList.add(new NavMenuItem(getResources().getString(R.string.title_control_fragment), R.drawable.ic_check_grey600_24dp, new ControlFragment()));
+        //menuList.add(new NavMenuItem(getResources().getString(R.string.title_control_fragment), R.drawable.ic_check_grey600_24dp, new ControlFragment()));
         mRecyclerView = (RecyclerView) findViewById(R.id.menu_recycler_view);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -198,6 +201,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
         getSessionId();
+        mToolbarContainer = findViewById(R.id.toolbar_conatiner);
         showToolbar();
     }
 
@@ -215,7 +219,6 @@ public class MainActivity extends ActionBarActivity {
         return super.onCreateView(parent, name, context, attrs);
     }
 
-
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -229,18 +232,11 @@ public class MainActivity extends ActionBarActivity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    public String getSessionId() {
+    public void getSessionId() {
         mSessionIdTask = new GetSessionIdTask(MainActivity.prefs.getString("login", null), MainActivity.prefs.getString("password", null));
         mSessionIdTask.execute();
-        try {
-            mSessionIdTask.get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return sessionId;
     }
+
     public class GetSessionIdTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mLogin;

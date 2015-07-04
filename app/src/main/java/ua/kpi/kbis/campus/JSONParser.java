@@ -1,8 +1,5 @@
 package ua.kpi.kbis.campus;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import org.apache.http.HttpEntity;
@@ -22,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.List;
 
 public class JSONParser {
@@ -93,6 +89,8 @@ public class JSONParser {
                 // request method is POST
                 // defaultHttpClient
                 DefaultHttpClient httpClient = new DefaultHttpClient();
+                String paramString = URLEncodedUtils.format(params, "utf-8");
+                url += "?" + paramString;
                 HttpPost httpPost = new HttpPost(url);
                 httpPost.setEntity(new UrlEncodedFormEntity(params));
 
@@ -147,6 +145,7 @@ public class JSONParser {
         return jObj;
 
     }
+
     public JSONObject makeHttpRequest(String url, String method) {
         // Making HTTP request
         try {
@@ -176,13 +175,13 @@ public class JSONParser {
             }
 
         } catch (UnsupportedEncodingException e) {
-            Log.e("lol",e.toString());
+            Log.e("lol", e.toString());
             e.printStackTrace();
         } catch (ClientProtocolException e) {
-            Log.e("lol",e.toString());
+            Log.e("lol", e.toString());
             e.printStackTrace();
         } catch (IOException e) {
-            Log.e("lol",e.toString());
+            Log.e("lol", e.toString());
             e.printStackTrace();
         }
 

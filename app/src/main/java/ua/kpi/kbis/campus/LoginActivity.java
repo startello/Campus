@@ -10,7 +10,6 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -107,7 +106,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 mAuthTask = new UserLoginTask(MainActivity.prefs.getString("login", null), MainActivity.prefs.getString("password", null));
                 mAuthTask.onPostExecute(true);
             }
-        }
+    }
 
     private void populateAutoComplete() {
         getLoaderManager().initLoader(0, null, this);
@@ -303,9 +302,9 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                             CURRENT_USER_URL, "GET", reqString).getJSONObject("Data");
                     MainActivity.prefs.edit().putString("login", mLogin).commit();
                     MainActivity.prefs.edit().putString("password", mPassword).commit();
-                    if (MainActivity.prefs.getString(mLogin, null) == null ) {
-                        MainActivity.prefs.edit().putString(mLogin, currentUser.toString()).commit();
-                        Log.i("lollogin", currentUser + " " + MainActivity.currentUser);
+                    MainActivity.prefs.edit().putString("userId", currentUser.getString("UserAccountId")).commit();
+                    if (MainActivity.prefs.getString(MainActivity.prefs.getString("userId", null), null) == null) {
+                        MainActivity.prefs.edit().putString(MainActivity.prefs.getString("userId", null), currentUser.toString()).commit();
                     }
                     return true;
                 }

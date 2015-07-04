@@ -1,30 +1,67 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ua.kpi.kbis.campus.ScheduleFragment"
-    app:theme="@style/ThemeOverlay.AppCompat.Dark">
+    app:theme="@style/ThemeOverlay.AppCompat.Dark"
+    tools:context="ua.kpi.kbis.campus.ScheduleFragment">
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_view_schedule"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewpager"
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/white"/>
-        <ua.kpi.kbis.campus.SlidingTabLayout
-            android:id="@+id/sliding_tabs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/primary"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark"/>
+            android:orientation="vertical">
 
-    </FrameLayout>
-</android.support.v4.widget.SwipeRefreshLayout>
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewpager_first"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/background_material_light" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewpager_second"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/background_material_light" />
+
+            <ua.kpi.kbis.campus.SlidingTabLayout
+                android:id="@+id/sliding_tabs_first"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/primary"
+                app:theme="@style/ThemeOverlay.AppCompat.Dark" />
+
+            <ua.kpi.kbis.campus.SlidingTabLayout
+                android:id="@+id/sliding_tabs_second"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/primary"
+                app:theme="@style/ThemeOverlay.AppCompat.Dark" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="3dp"
+                android:layout_below="@id/sliding_tabs_first"
+                android:background="@drawable/container_dropshadow"/>
+        </RelativeLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <RelativeLayout
+        android:id="@+id/schedule_progress_wheel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/primary">
+
+        <com.pnikosis.materialishprogress.ProgressWheel
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            app:matProg_barColor="@color/accent"
+            app:matProg_progressIndeterminate="true" />
+    </RelativeLayout>
 </FrameLayout>

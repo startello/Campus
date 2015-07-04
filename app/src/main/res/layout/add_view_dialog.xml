@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp">
+    <TextView
+        android:id="@+id/bulletin_caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/text_primary"
+        android:textSize="24sp"
+        android:text="Додати одержувача"/>
+    <fr.ganfra.materialspinner.MaterialSpinner
+        android:id="@+id/spinner_facculty"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        app:ms_alignLabels="false"
+        app:ms_arrowColor="@color/divider"
+        app:ms_arrowSize="16dp"
+        app:ms_baseColor="@color/text_secondary"
+        app:ms_highlightColor="@color/primary"
+        app:ms_errorColor="@color/accent"
+        app:ms_hint="Профіль"
+        app:ms_multiline="false"
+        app:ms_thickness="0dp" />
+    <fr.ganfra.materialspinner.MaterialSpinner
+        android:id="@+id/spinner_dist"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        app:ms_alignLabels="false"
+        app:ms_arrowColor="@color/divider"
+        app:ms_arrowSize="16dp"
+        app:ms_baseColor="@color/text_secondary"
+        app:ms_highlightColor="@color/primary"
+        app:ms_errorColor="@color/accent"
+        app:ms_hint="Факультет"
+        app:ms_multiline="false"
+        app:ms_thickness="0dp"/>
+    <fr.ganfra.materialspinner.MaterialSpinner
+        android:id="@+id/spinner_group"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        app:ms_alignLabels="false"
+        app:ms_arrowColor="@color/divider"
+        app:ms_arrowSize="16dp"
+        app:ms_baseColor="@color/text_secondary"
+        app:ms_highlightColor="@color/primary"
+        app:ms_errorColor="@color/accent"
+        app:ms_hint="Група"
+        app:ms_multiline="false"
+        app:ms_thickness="0dp"/>
+</LinearLayout>

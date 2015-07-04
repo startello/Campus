@@ -4,7 +4,8 @@
     android:id="@+id/discipline_container"
     android:layout_width="match_parent"
     android:layout_height="72dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/text_icon">
 
     <com.balysv.materialripple.MaterialRippleLayout
         android:layout_width="match_parent"

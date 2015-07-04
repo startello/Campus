@@ -10,8 +10,10 @@
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
         <item name="android:windowBackground">@color/background_material_light</item>
+        <item name="searchViewStyle">@style/AppTheme.SearchView</item>
     </style>
-
+    <style name="AppTheme.SearchView" parent="Widget.AppCompat.SearchView">
+    </style>
     <style name="horizontal_line">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">1dp</item>
@@ -24,9 +26,15 @@
         <item name="android:textColorPrimary">#FFFFFF</item>
         <item name="android:textColorSecondary">#FFFFFF</item>
         <item name="android:labelTextSize">14sp</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary</item>
+        <item name="colorAccent">@color/accent</item>
     </style>
 
     <style name="AppTheme.ToolbarPopup" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary</item>
+        <item name="colorAccent">@color/accent</item>
     </style>
 
     <style name="AppTheme.ToolbarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
@@ -36,5 +44,20 @@
         <item name="android:minWidth">0dip</item>
         <item name="android:paddingLeft">0dip</item>
         <item name="android:paddingRight">0dip</item>
+    </style>
+    <style name="MaterialDesignStyle" parent="MD">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">16dp</item>
+        <item name="animationVelocity">6</item>
+        <item name="insetBottom">16dp</item>
+        <item name="insetTop">16dp</item>
+        <item name="insetLeft">16dp</item>
+        <item name="insetRight">16dp</item>
+        <item name="measureFactor">1.4</item>
+        <item name="offDrawable">@drawable/schedule_back_off</item>
+        <item name="onDrawable">@drawable/schedule_back_on</item>
+        <item name="thumbDrawable">@drawable/schedule_thumb</item>
+        <item name="thumb_margin">-17dp</item>
     </style>
 </resources>

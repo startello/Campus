@@ -6,7 +6,15 @@
     android:background="?attr/colorPrimary"
     android:minHeight="@dimen/actionBarSize"
     android:paddingTop="@dimen/app_bar_top_padding"
-    app:titleTextAppearance="@style/AppTheme.ToolbarTitle"
     app:popupTheme="@style/AppTheme.ToolbarPopup"
-    app:theme="@style/AppTheme.Toolbar">
-    </android.support.v7.widget.Toolbar>
+    app:theme="@style/AppTheme.Toolbar"
+    app:titleTextAppearance="@style/AppTheme.ToolbarTitle">
+    <com.kyleduo.switchbutton.switchbutton.SwitchButton
+        android:id="@+id/schedule_switch_button"
+        style="@style/MaterialDesignStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="16dp"
+        android:visibility="invisible"
+        android:layout_gravity="right"/>
+</android.support.v7.widget.Toolbar>

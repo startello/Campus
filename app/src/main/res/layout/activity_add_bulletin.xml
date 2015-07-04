@@ -45,24 +45,20 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginEnd="16dp"
                 android:src="@drawable/ic_group_grey600_24dp" />
-            <com.balysv.materialripple.MaterialRippleLayout
-                android:layout_width="fill_parent"
-                android:layout_height="56dp"
-                app:mrl_rippleDelayClick="false"
-                app:mrl_rippleHover="true"
-                app:mrl_rippleColor="@color/selection"
-                app:mrl_rippleAlpha="0.2">
-            <TextView
+            <LinearLayout
                 android:id="@+id/add_bulletin_available_for"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:textSize="16dp"
-                android:textColor="@color/text_primary"
-                android:gravity="center_vertical"
-                android:text="Доступно для"/>
-            </com.balysv.materialripple.MaterialRippleLayout>
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <com.gc.materialdesign.views.ButtonFlat
+                    android:id="@+id/action_add_available_for"
+                    android:layout_width="fill_parent"
+                    android:layout_height="56dp"
+                    android:layout_gravity="center"
+                    android:background="@color/text_primary"
+                    android:text="@string/action_add"/>
+            </LinearLayout>
         </LinearLayout>
-
         <FrameLayout
             style="@style/horizontal_line"
             android:layout_marginLeft="72dp" />

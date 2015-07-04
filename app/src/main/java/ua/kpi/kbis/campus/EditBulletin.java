@@ -1,8 +1,8 @@
 package ua.kpi.kbis.campus;
 
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -54,35 +54,22 @@ public class EditBulletin extends ActionBarActivity implements DatePickerDialog.
         mAvailableFor = (TextView) findViewById(R.id.edit_bulletin_available_for);
         mCaption = (MaterialEditText) findViewById(R.id.edit_bulletin_caption);
         mText = (MaterialEditText) findViewById(R.id.edit_bulletin_text);
-        List<String> availableFor = new ArrayList<>();
-        try {
-            for (int i = 0; i < MainActivity.currentUser.getJSONArray("availableFor").length(); i++) {
-                try {
-                    availableFor.add(MainActivity.currentUser.getJSONArray("availableFor").getJSONObject(i).getString("Name"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         mExtras = getIntent().getExtras();
         try {
             mItem = new JSONObject(mExtras.getString("item"));
             mCaption.setText(mItem.getString("Subject"));
             mText.setText(mItem.getString("Text"));
             mCaption.setSelection(mCaption.getText().length());
-            calendarFrom.set(Integer.parseInt(mItem.getString("StartDate").substring(0,4)),Integer.parseInt(mItem.getString("StartDate").substring(5,7)),Integer.parseInt(mItem.getString("StartDate").substring(8,10)));
-            calendarTo.set(Integer.parseInt(mItem.getString("EndDate").substring(0,4)),Integer.parseInt(mItem.getString("EndDate").substring(5,7)),Integer.parseInt(mItem.getString("EndDate").substring(8,10)));
+            calendarFrom.set(Integer.parseInt(mItem.getString("StartDate").substring(0, 4)), Integer.parseInt(mItem.getString("StartDate").substring(5, 7)), Integer.parseInt(mItem.getString("StartDate").substring(8, 10)));
+            calendarTo.set(Integer.parseInt(mItem.getString("EndDate").substring(0, 4)), Integer.parseInt(mItem.getString("EndDate").substring(5, 7)), Integer.parseInt(mItem.getString("EndDate").substring(8, 10)));
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        mAvailableFor.setText(availableFor.get(0));
         /*ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.simple_spinner_item, availableFor.toArray(new String[availableFor.size()]));
         adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         mAvailableFor.setAdapter(adapter);*/
         datePickerDialogFrom = DatePickerDialog.newInstance(this,
-                 calendarFrom.get(Calendar.YEAR) >= 1985 ? calendarFrom.get(Calendar.YEAR): 1985,
+                calendarFrom.get(Calendar.YEAR) >= 1985 ? calendarFrom.get(Calendar.YEAR) : 1985,
                 calendarFrom.get(Calendar.MONTH), calendarFrom.get(Calendar.DAY_OF_MONTH), false);
         mFrom = (TextView) findViewById(R.id.edit_bulletin_from);
         mFrom.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +82,7 @@ public class EditBulletin extends ActionBarActivity implements DatePickerDialog.
             }
         });
         datePickerDialogTo = DatePickerDialog.newInstance(this,
-                calendarTo.get(Calendar.YEAR) >= 1985 ? calendarTo.get(Calendar.YEAR): 1985,
+                calendarTo.get(Calendar.YEAR) >= 1985 ? calendarTo.get(Calendar.YEAR) : 1985,
                 calendarTo.get(Calendar.MONTH), calendarTo.get(Calendar.DAY_OF_MONTH), false);
         mTo = (TextView) findViewById(R.id.edit_bulletin_to);
         mTo.setOnClickListener(new View.OnClickListener() {
@@ -148,13 +135,14 @@ public class EditBulletin extends ActionBarActivity implements DatePickerDialog.
     public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
         if (datePickerDialog == datePickerDialogFrom) {
             calendarFrom.set(year, month, day);
-            mFrom.setText(day + " " + String.format(Locale.getDefault(),"%tB",calendarFrom) + " " + year);
+            mFrom.setText(day + " " + String.format(Locale.getDefault(), "%tB", calendarFrom) + " " + year);
         }
         if (datePickerDialog == datePickerDialogTo) {
             calendarTo.set(year, month, day);
-            mTo.setText(day + " " + String.format(Locale.getDefault(),"%tB",calendarTo) + " " + year);
+            mTo.setText(day + " " + String.format(Locale.getDefault(), "%tB", calendarTo) + " " + year);
         }
     }
+
     public class SaveBulletinTask extends AsyncTask<Void, Void, Boolean> {
         @Override
         protected Boolean doInBackground(Void... params) {
@@ -172,8 +160,8 @@ public class EditBulletin extends ActionBarActivity implements DatePickerDialog.
                 reqString.add(new BasicNameValuePair("sessionId", MainActivity.sessionId));
                 reqString.add(new BasicNameValuePair("bulletinBoardId", mItem.getString("BulletinId")));
                 reqString.add(new BasicNameValuePair("bulletinSubjet", String.valueOf(mCaption.getText())));
-                reqString.add(new BasicNameValuePair("dateStop",String.format("%04d-%02d-%02dT00:00:00", calendarTo.get(Calendar.YEAR), calendarTo.get(Calendar.MONTH)+1, calendarTo.get(Calendar.DAY_OF_MONTH))));
-                reqString.add(new BasicNameValuePair("dateStart",String.format("%04d-%02d-%02dT00:00:00", calendarFrom.get(Calendar.YEAR), calendarFrom.get(Calendar.MONTH)+1, calendarFrom.get(Calendar.DAY_OF_MONTH))));
+                reqString.add(new BasicNameValuePair("dateStop", String.format("%04d-%02d-%02dT00:00:00", calendarTo.get(Calendar.YEAR), calendarTo.get(Calendar.MONTH) + 1, calendarTo.get(Calendar.DAY_OF_MONTH))));
+                reqString.add(new BasicNameValuePair("dateStart", String.format("%04d-%02d-%02dT00:00:00", calendarFrom.get(Calendar.YEAR), calendarFrom.get(Calendar.MONTH) + 1, calendarFrom.get(Calendar.DAY_OF_MONTH))));
                 reqString.add(new BasicNameValuePair("text", String.valueOf(mText.getText())));
                 reqString.add(new BasicNameValuePair("dcProfileId", "2"));
                 reqString.add(new BasicNameValuePair("rtProfilePermissionId", "1"));

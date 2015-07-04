@@ -1,14 +1,10 @@
 package ua.kpi.kbis.campus;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +16,6 @@ import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SingleSelector;
 import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.json.JSONException;
 
@@ -124,6 +119,7 @@ class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 mRelativeLayout.setBackgroundColor(mContext.getResources().getColor(R.color.menu_item_unchecked));
             }
         }
+
         @Override
         public void onClick(View v) {
             if (mMultiSelector.isSelectable()) {
@@ -140,15 +136,26 @@ class MenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private final ImageView mBg;
         private final TextView mName;
         private final TextView mInfo;
-        private com.nostra13.universalimageloader.core.ImageLoader imageLoader;
 
         public MenuHeaderHolder(View itemView) {
             super(itemView);
             mImage = (CircleImageView) itemView.findViewById(R.id.nav_user_image);
+            mImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        mContext.startActivity(new Intent(mContext, ViewCurrentUser.class).putExtra("userId",
+                                Integer.parseInt(MainActivity.currentUser.getString("UserAccountId"))));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
             mBg = (ImageView) itemView.findViewById(R.id.nav_bg);
             mName = (TextView) itemView.findViewById(R.id.nav_user_name);
             mInfo = (TextView) itemView.findViewById(R.id.nav_user_info);
         }
+
         public void bindMenuHeader() {
             try {
                 mName.setText(MainActivity.currentUser.getString("FullName"));

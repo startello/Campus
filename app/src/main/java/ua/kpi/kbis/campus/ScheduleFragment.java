@@ -1,98 +1,213 @@
 package ua.kpi.kbis.campus;
 
 
-import android.content.Context;
+import android.animation.Animator;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.TextView;
+
+import com.github.mrengineer13.snackbar.SnackBar;
+import com.kyleduo.switchbutton.switchbutton.SwitchButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.Calendar;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class ScheduleFragment extends Fragment {
 
 
     private static final String SCHEDULE_URL = "http://campus-api.azurewebsites.net/Schedule/GetLessons?uid=485";
-    private ViewPager mViewPager;
-    private SlidingTabLayout mSlidingTabLayout;
-    private JSONParser jsonParser = new JSONParser();
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private SchedulePagerAdapter mAdapter;
-    private ScheduleLoadTask mScheduleTask;
+    private ViewPager mFirstWeekViewPager;
+    private SlidingTabLayout mFirstWeekSlidingTabLayout;
+    private ViewPager mSecondWeekViewPager;
+    private SlidingTabLayout mSecondWeekSlidingTabLayout;
+    private SchedulePagerAdapter mFirstWeekAdapter;
+    private SchedulePagerAdapter mSecondWeekAdapter;
+    private SwitchButton mSwitch;
+    private View mProgressView;
+    private int mCurrentWeek;
+    private int mCurrentWeekDay;
+    private View mView;
 
     public ScheduleFragment() {
-        // Required empty public constructor
+        mCurrentWeek = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR) % 2;
+        mCurrentWeekDay = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 2;
+        if (mCurrentWeekDay < 0) mCurrentWeekDay = 7 - mCurrentWeekDay;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_schedule, container, false);
-        new ScheduleLoadTask().execute();
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_view_schedule);
-        mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
-        mAdapter = new SchedulePagerAdapter(1);
-        mViewPager.setAdapter(mAdapter);
-        mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.setCustomTabView(R.layout.pager_tab, R.id.pager_tab_text);
-        mSlidingTabLayout.setViewPager(mViewPager);
-        mSlidingTabLayout.setPadding(0, (int) (getResources().getDimension(R.dimen.app_bar_top_padding)
-                + getResources().getDimension(R.dimen.actionBarSize)), 0, 0);
-        mSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
-        mSlidingTabLayout.setDividerColors(getResources().getColor(R.color.text_icon));
-        mSwipeRefreshLayout.setProgressViewOffset(false, (int) (getResources().getDimension(R.dimen.app_bar_top_padding)
-                + getResources().getDimension(R.dimen.actionBarSize)) + 48 + 48, (int) (getResources().getDimension(R.dimen.app_bar_top_padding)
-                + getResources().getDimension(R.dimen.actionBarSize)) + 48 + 48 + 48);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new ScheduleLoadTask().execute();
-            }
-        });
-        mSwipeRefreshLayout.requestDisallowInterceptTouchEvent(false);
-        mSwipeRefreshLayout.setEnabled(false);
-        return view;
+        mView = inflater.inflate(R.layout.fragment_schedule, container, false);
+        mapViews();
+        initSwitch();
+        setTitle();
+        mProgressView.setVisibility(View.VISIBLE);
+        try {
+            MainActivity.currentUser.getJSONObject("schedule");
+            initAdapters();
+            initSlidingTabLayout();
+            selectCurrentDay();
+            mProgressView.setVisibility(View.INVISIBLE);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            new ScheduleLoadTask().execute();
+        }
+        return mView;
     }
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    private void mapViews() {
+        mFirstWeekSlidingTabLayout = (SlidingTabLayout) mView.findViewById(R.id.sliding_tabs_first);
+        mFirstWeekViewPager = (ViewPager) mView.findViewById(R.id.viewpager_first);
+        mSecondWeekSlidingTabLayout = (SlidingTabLayout) mView.findViewById(R.id.sliding_tabs_second);
+        mSecondWeekViewPager = (ViewPager) mView.findViewById(R.id.viewpager_second);
+        mSwitch = (SwitchButton) MainActivity.mToolbar.findViewById(R.id.schedule_switch_button);
+        mProgressView = mView.findViewById(R.id.schedule_progress_wheel);
+        getActivity().findViewById(R.id.drop_shadow).setVisibility(View.INVISIBLE);
+    }
+
+    private void initAdapters() {
+        mFirstWeekAdapter = new SchedulePagerAdapter(0, getActivity());
+        mSecondWeekAdapter = new SchedulePagerAdapter(1, getActivity());
+        mFirstWeekViewPager.setAdapter(mFirstWeekAdapter);
+        mSecondWeekViewPager.setAdapter(mSecondWeekAdapter);
+    }
+
+    private void showViewPager(boolean week) {
+        if (week) {
+            mSecondWeekViewPager.animate().cancel();
+            mSecondWeekSlidingTabLayout.setVisibility(View.VISIBLE);
+            mSecondWeekViewPager.setVisibility(View.VISIBLE);
+            mSecondWeekViewPager.animate().scaleX(1).scaleY(1).setDuration(200).setListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mFirstWeekSlidingTabLayout.setVisibility(View.INVISIBLE);
+                    mFirstWeekViewPager.setVisibility(View.INVISIBLE);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            }).start();
+        } else {
+            mSecondWeekViewPager.animate().cancel();
+            mFirstWeekSlidingTabLayout.setVisibility(View.VISIBLE);
+            mFirstWeekViewPager.setVisibility(View.VISIBLE);
+            mSecondWeekViewPager.animate().scaleX(0).scaleY(0).setDuration(200).setListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mSecondWeekSlidingTabLayout.setVisibility(View.INVISIBLE);
+                    mSecondWeekViewPager.setVisibility(View.INVISIBLE);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            }).start();
+        }
+    }
+
+    private void selectCurrentDay() {
+        if (mCurrentWeek == 0) {
+            if (mCurrentWeekDay < mFirstWeekAdapter.getCount()) {
+                mSwitch.setChecked(false);
+                mFirstWeekViewPager.setCurrentItem(mCurrentWeekDay);
+                ((TextView) mFirstWeekSlidingTabLayout.getTabStrip().getChildAt(mCurrentWeekDay).findViewById(R.id.pager_tab_text)).
+                        setTypeface(Typeface.DEFAULT_BOLD);
+                ((TextView) mFirstWeekSlidingTabLayout.getTabStrip().getChildAt(mCurrentWeekDay).findViewById(R.id.pager_tab_date)).
+                        setTypeface(Typeface.DEFAULT_BOLD);
+            } else {
+                mSwitch.setChecked(true);
+            }
+        } else {
+            if (mCurrentWeekDay < mSecondWeekAdapter.getCount()) {
+                mSwitch.setChecked(true);
+                mSecondWeekViewPager.setCurrentItem(mCurrentWeekDay);
+                ((TextView) mSecondWeekSlidingTabLayout.getTabStrip().getChildAt(mCurrentWeekDay).findViewById(R.id.pager_tab_text)).
+                        setTypeface(Typeface.DEFAULT_BOLD);
+                ((TextView) mSecondWeekSlidingTabLayout.getTabStrip().getChildAt(mCurrentWeekDay).findViewById(R.id.pager_tab_date)).
+                        setTypeface(Typeface.DEFAULT_BOLD);
+            } else {
+                mSwitch.setChecked(false);
+            }
+        }
+        mSwitch.setEnabled(true);
+    }
+
+    private void initSlidingTabLayout() {
+        mFirstWeekSlidingTabLayout.setCustomTabView(R.layout.pager_tab, R.id.pager_tab_text);
+        mFirstWeekSlidingTabLayout.setPadding(0, (int) (getResources().getDimension(R.dimen.app_bar_top_padding)
+                + getResources().getDimension(R.dimen.actionBarSize)), 0, 0);
+        mFirstWeekSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.text_icon));
+        mSecondWeekSlidingTabLayout.setCustomTabView(R.layout.pager_tab, R.id.pager_tab_text);
+        mSecondWeekSlidingTabLayout.setPadding(0, (int) (getResources().getDimension(R.dimen.app_bar_top_padding)
+                + getResources().getDimension(R.dimen.actionBarSize)), 0, 0);
+        mSecondWeekSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.text_icon));
+        mFirstWeekSlidingTabLayout.setViewPager(mFirstWeekViewPager);
+        mSecondWeekSlidingTabLayout.setViewPager(mSecondWeekViewPager);
+        showViewPager(mSwitch.isChecked());
+    }
+
+    private void initSwitch() {
+        mSwitch.setVisibility(View.VISIBLE);
+        mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                showViewPager(isChecked);
+            }
+        });
+        mSwitch.setEnabled(false);
+    }
+
+    private void setTitle() {
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_schedule_fragment);
         ((MainActivity) getActivity()).showToolbar();
     }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mSwitch.setVisibility(View.INVISIBLE);
+        getActivity().findViewById(R.id.drop_shadow).setVisibility(View.VISIBLE);
+    }
+
     public class ScheduleLoadTask extends AsyncTask<Void, Void, Boolean> {
         private JSONObject schedule = new JSONObject();
 
-        //int mSize = 0;
         @Override
         protected Boolean doInBackground(Void... params) {
-            //mSize = disciplineList.size();
             try {
-                JSONObject json = jsonParser.makeHttpRequest(
+                JSONObject json = new JSONParser().makeHttpRequest(
                         SCHEDULE_URL, "GET");
                 JSONArray result = json.getJSONArray("Data");
                 for (int i = 0; i < result.length(); i++) {
@@ -102,9 +217,16 @@ public class ScheduleFragment extends Fragment {
                     if (schedule.getJSONArray(object.getString("lesson_week")).opt(object.getInt("day_number")) == null)
                         schedule.getJSONArray(object.getString("lesson_week")).put(object.getInt("day_number"), new JSONArray());
                     schedule.getJSONArray(object.getString("lesson_week")).getJSONArray(object.getInt("day_number")).put(object);
+                    MainActivity.currentUser.put("schedule", schedule);
+                    MainActivity.prefs.edit().putString(MainActivity.prefs.getString("userId", null), MainActivity.currentUser.toString()).commit();
                 }
                 return true;
             } catch (Exception e) {
+/*                new SnackBar.Builder(getActivity().getApplicationContext(), mView)
+                        .withMessage(e.toString())
+//                        .withMessageId(messageId)
+                        .withTextColorId(R.color.accent)
+                        .show();*/
                 e.printStackTrace();
             }
             return false;
@@ -112,121 +234,12 @@ public class ScheduleFragment extends Fragment {
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            mSwipeRefreshLayout.setRefreshing(false);
             if (success) {
-                try {
-                    MainActivity.currentUser.put("schedule", schedule);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                MainActivity.prefs.edit().putString(MainActivity.prefs.getString("login",null),MainActivity.currentUser.toString()).commit();
-                mAdapter = new SchedulePagerAdapter(1);
-                mViewPager.setAdapter(mAdapter);
-                mSlidingTabLayout.setViewPager(mViewPager);
-            } else {
+                initAdapters();
+                initSlidingTabLayout();
+                selectCurrentDay();
             }
+            mProgressView.setVisibility(View.INVISIBLE);
         }
-
-        @Override
-        protected void onCancelled() {
-            mSwipeRefreshLayout.setRefreshing(false);
-        }
-    }
-
-    class SchedulePagerAdapter extends PagerAdapter {
-        List<String> mDaysOfWeek = new ArrayList<>();
-        private RecyclerView mRecyclerView;
-        private LinearLayoutManager mLayoutManager;
-        private ScheduleAdapter mAdapter;
-        private View[] mPages;
-        private int mWeek;
-        SchedulePagerAdapter(int week) {
-            mWeek = week;
-            try {
-                if (MainActivity.currentUser.getJSONObject("schedule").getJSONArray(mWeek+"").opt(1) != null)
-                    mDaysOfWeek.add("Понеділок".toUpperCase());
-                if (MainActivity.currentUser.getJSONObject("schedule").getJSONArray(mWeek+"").opt(2) != null)
-                    mDaysOfWeek.add("Вівторок".toUpperCase());
-                if (MainActivity.currentUser.getJSONObject("schedule").getJSONArray(mWeek+"").opt(3) != null)
-                    mDaysOfWeek.add("Середа".toUpperCase());
-                if (MainActivity.currentUser.getJSONObject("schedule").getJSONArray(mWeek+"").opt(4) != null)
-                    mDaysOfWeek.add("Четвер".toUpperCase());
-                if (MainActivity.currentUser.getJSONObject("schedule").getJSONArray(mWeek+"").opt(5) != null)
-                    mDaysOfWeek.add("П'ятниця".toUpperCase());
-                if (MainActivity.currentUser.getJSONObject("schedule").getJSONArray(mWeek+"").opt(6) != null)
-                    mDaysOfWeek.add("Субота".toUpperCase());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            mPages = new View[getCount()];
-        }
-
-        /*
-         * @return the number of pages to display
-         */
-        @Override
-        public int getCount() {
-            return mDaysOfWeek.size();
-        }
-
-        /**
-         * @return true if the value returned from {@link #instantiateItem(ViewGroup, int)} is the
-         * same object as the {@link View} added to the {@link ViewPager}.
-         */
-        @Override
-        public boolean isViewFromObject(View view, Object o) {
-            return o == view;
-        }
-
-        // BEGIN_INCLUDE (pageradapter_getpagetitle)
-
-        /**
-         * Return the title of the item at {@code position}. This is important as what this method
-         * returns is what is displayed in the {@link SlidingTabLayout}.
-         * <p/>
-         * Here we construct one using the position value, but for real application the title should
-         * refer to the item's contents.
-         */
-        public View getPage(int position) {
-            return mPages[position];
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mDaysOfWeek.get(position);
-        }
-        // END_INCLUDE (pageradapter_getpagetitle)
-
-        /**
-         * Instantiate the {@link View} which should be displayed at {@code position}. Here we
-         * inflate a layout from the apps resources and then change the text view to signify the position.
-         */
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            // Inflate a new layout from our resources
-            View view = getActivity().getLayoutInflater().inflate(R.layout.pager_item,
-                    container, false);
-            // Add the newly created View to the ViewPager
-            container.addView(view);
-            mRecyclerView = (RecyclerView) view.findViewById(R.id.schedule_recycler_view);
-            mRecyclerView.setHasFixedSize(true);
-            mLayoutManager = new LinearLayoutManager(getActivity());
-            mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            mRecyclerView.setLayoutManager(mLayoutManager);
-            try {
-                mAdapter = new ScheduleAdapter(MainActivity.currentUser.getJSONObject("schedule").getJSONArray(mWeek+"").getJSONArray((position + 1)), getActivity());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            mRecyclerView.setAdapter(mAdapter);
-            mPages[position] = view;
-            return view;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
-        }
-
     }
 }

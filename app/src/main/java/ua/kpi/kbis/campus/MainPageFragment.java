@@ -1,34 +1,23 @@
 package ua.kpi.kbis.campus;
 
 
-import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 
-import com.gc.materialdesign.views.ButtonFloat;
 import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.ScrollDirectionListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -37,53 +26,59 @@ import java.util.List;
 public class MainPageFragment extends Fragment {
 
     private static final String BL_URL = "http://campus-api.azurewebsites.net/BulletinBoard/DeskGetActualBulletins?userId=";
-    private static final String BL_GROUPS_URL = "http://campus-api.azurewebsites.net/BulletinBoard/DeskGetProfileTypesList";
+    private static final String BL_PROFILE_URL = "http://campus-api.azurewebsites.net/BulletinBoard/GetAllowedProfiles?sessionId=";
+    private static final String BL_FACULTY_URL = "http://campus-api.azurewebsites.net/BulletinBoard/GetAllowedSubdivisions?sessionId=";
+    private static final String BL_GROUPS_URL = "http://campus-api.azurewebsites.net/BulletinBoard/GetAllowedGroups?sessionId=";
     private RecyclerView mRecyclerView;
-    private GridLayoutManager mLayoutManager;
     private MainAdapter mAdapter;
-    private JSONParser jsonParser = new JSONParser();
-    private BulletinsLoadTask mDiscTask;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private FloatingActionButton mButtonFloat;
-    private View mView;
-    private FragmentActivity mContext;
+    private View mProgressView;
 
     public MainPageFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        mContext = (FragmentActivity) activity;
-        super.onAttach(activity);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        new BulletinsLoadTask().execute();
-        mView = inflater.inflate(R.layout.fragment_main_page, container, false);
-        mButtonFloat = (FloatingActionButton) mView.findViewById(R.id.buttonFloat);
-        mButtonFloat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getActivity(), AddBulletin.class));
-            }
-        });
-        ScaleAnimation anim = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF,0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        anim.setDuration(500);
-        anim.setStartOffset(200);
-        mButtonFloat.startAnimation(anim);
-        mRecyclerView = (RecyclerView) mView.findViewById(R.id.bulletin_recycler_view);
+        View view = inflater.inflate(R.layout.fragment_main_page, container, false);
+        mapViews(view);
+        setTitle();
+        initRecyclerView();
+        initButtonFloat();
+        initSwipeRefreshLayout();
+        mProgressView.setVisibility(View.VISIBLE);
+        try {
+            MainActivity.currentUser.getJSONArray("bulletins");
+            mProgressView.setVisibility(View.INVISIBLE);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            new BulletinsLoadTask().execute();
+        }
+        return view;
+    }
+
+    private void mapViews(View view) {
+        mButtonFloat = (FloatingActionButton) view.findViewById(R.id.buttonFloat);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.bulletin_recycler_view);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_bulletins);
+        mProgressView = view.findViewById(R.id.schedule_progress_wheel);
+    }
+
+    private void initRecyclerView() {
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new GridLayoutManager(getActivity(), 1);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         mAdapter = new MainAdapter(getActivity());
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void initButtonFloat() {
         mButtonFloat.attachToRecyclerView(mRecyclerView, new ScrollDirectionListener() {
             @Override
             public void onScrollDown() {
             }
+
             @Override
             public void onScrollUp() {
             }
@@ -98,13 +93,25 @@ public class MainPageFragment extends Fragment {
                         ((MainActivity) getActivity()).showToolbar();
                     }
             }
+
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 ((MainActivity) getActivity()).moveToolbar(dy);
             }
         });
-        mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swipe_refresh_bulletins);
+        mButtonFloat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), AddBulletin.class));
+            }
+        });
+        mButtonFloat.setScaleX(0);
+        mButtonFloat.setScaleY(0);
+        mButtonFloat.animate().scaleX(1).scaleY(1).setDuration(500).setStartDelay(200).start();
+    }
+
+    private void initSwipeRefreshLayout() {
         mSwipeRefreshLayout.setProgressViewOffset(false, (int) (getResources().getDimension(R.dimen.app_bar_top_padding)), (int) (getResources().getDimension(R.dimen.app_bar_top_padding)
                 + getResources().getDimension(R.dimen.actionBarSize)) + 48);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary);
@@ -114,12 +121,9 @@ public class MainPageFragment extends Fragment {
                 new BulletinsLoadTask().execute();
             }
         });
-        return mView;
     }
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    private void setTitle() {
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(R.string.title_main_page_fragment);
         ((MainActivity) getActivity()).showToolbar();
     }
@@ -127,23 +131,42 @@ public class MainPageFragment extends Fragment {
     public class BulletinsLoadTask extends AsyncTask<Void, Void, Boolean> {
         private JSONArray bulletins = new JSONArray();
         private JSONArray availableList = new JSONArray();
+        private JSONArray availableListFaculty = new JSONArray();
+        private JSONArray availableListGroup = new JSONArray();
 
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
 
-                JSONObject json = jsonParser.makeHttpRequest(
-                        BL_URL + MainActivity.currentUser.getString("UserAccountId"), "GET");
+                JSONObject json = new JSONParser().makeHttpRequest(
+                        BL_URL + MainActivity.prefs.getString("userId", null), "GET");
                 JSONArray result = json.getJSONArray("Data");
                 for (int i = 0; i < result.length(); i++) {
                     bulletins.put(result.getJSONObject(i));
                 }
-                json = jsonParser.makeHttpRequest(
-                        BL_GROUPS_URL, "GET");
+                json = new JSONParser().makeHttpRequest(
+                        BL_PROFILE_URL+ MainActivity.sessionId, "GET");
                 result = json.getJSONArray("Data");
                 for (int i = 0; i < result.length(); i++) {
-                    availableList.put(result.getJSONObject(i));
+                    availableList.put(result.getString(i));
                 }
+                json = new JSONParser().makeHttpRequest(
+                        BL_FACULTY_URL+ MainActivity.sessionId, "GET");
+                result = json.getJSONArray("Data");
+                for (int i = 0; i < result.length(); i++) {
+                    availableListFaculty.put(result.getString(i));
+                }
+                json = new JSONParser().makeHttpRequest(
+                        BL_GROUPS_URL+ MainActivity.sessionId, "GET");
+                result = json.getJSONArray("Data");
+                for (int i = 0; i < result.length(); i++) {
+                    availableListGroup.put(result.getString(i));
+                }
+                MainActivity.currentUser.put("bulletins", bulletins);
+                MainActivity.currentUser.put("availableFor", availableList);
+                MainActivity.currentUser.put("availableForFaculty", availableListFaculty);
+                MainActivity.currentUser.put("availableForGroup", availableListGroup);
+                MainActivity.prefs.edit().putString(MainActivity.prefs.getString("userId", null), MainActivity.currentUser.toString()).commit();
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -153,22 +176,10 @@ public class MainPageFragment extends Fragment {
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            mSwipeRefreshLayout.setRefreshing(false);
             if (success) {
-                try {
-                    MainActivity.currentUser.put("bulletins", bulletins);
-                    MainActivity.currentUser.put("availableFor", availableList);
-                    MainActivity.prefs.edit().putString(MainActivity.prefs.getString("login",null),MainActivity.currentUser.toString()).commit();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
                 mAdapter.notifyDataSetChanged();
-            } else {
             }
-        }
-
-        @Override
-        protected void onCancelled() {
+            mProgressView.setVisibility(View.INVISIBLE);
             mSwipeRefreshLayout.setRefreshing(false);
         }
     }

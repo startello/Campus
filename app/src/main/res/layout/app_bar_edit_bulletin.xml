@@ -16,5 +16,6 @@
         android:layout_height="@dimen/actionBarSize"
         android:layout_gravity="right"
         android:text="@string/action_save"
-        android:background="@color/text_icon"/>
+        android:background="@color/text_icon"
+        android:paddingRight="16dp"/>
 </android.support.v7.widget.Toolbar>

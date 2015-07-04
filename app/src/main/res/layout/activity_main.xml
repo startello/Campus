@@ -27,9 +27,23 @@
                 android:layout_height="match_parent"
                 android:foreground="?android:windowContentOverlay" />
 
-            <include
-                android:id="@+id/app_bar"
-                layout="@layout/app_bar" />
+            <LinearLayout
+                android:id="@+id/toolbar_conatiner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <include
+                    android:id="@+id/app_bar"
+                    layout="@layout/app_bar" />
+
+                <View
+                    android:id="@+id/drop_shadow"
+                    android:layout_width="fill_parent"
+                    android:layout_height="3dp"
+                    android:layout_below="@id/app_bar"
+                    android:background="@drawable/container_dropshadow" />
+            </LinearLayout>
         </RelativeLayout>
         <!-- The navigation drawer -->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

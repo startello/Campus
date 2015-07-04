@@ -12,9 +12,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Stanislav on 17.02.2015.
  */
@@ -65,27 +62,27 @@ class ScheduleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             mTeacher = (TextView) itemView.findViewById(R.id.event_teacher);
             mAuditory = (TextView) itemView.findViewById(R.id.event_auditory);
             mItemView = itemView;
-            ((ImageView) itemView.findViewById(R.id.auditory_icon)).setColorFilter(mContext.getResources().getColor(R.color.primary));
-            ((ImageView) itemView.findViewById(R.id.time_icon)).setColorFilter(mContext.getResources().getColor(R.color.primary));
+            ((ImageView) itemView.findViewById(R.id.auditory_icon)).setColorFilter(mContext.getResources().getColor(R.color.text_secondary));
+            ((ImageView) itemView.findViewById(R.id.time_icon)).setColorFilter(mContext.getResources().getColor(R.color.text_secondary));
             //itemView.setOnClickListener(this);
         }
 
         public void bindScheduleItem(JSONObject scheduleItem) {
             if (getPosition() == 0) {
                 RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) mItemView.getLayoutParams();
-                params.setMargins(0, (int) (mContext.getResources().getDimension(R.dimen.app_bar_top_padding)
-                        + mContext.getResources().getDimension(R.dimen.actionBarSize)) + 104, 0, 0); //substitute parameters for left, top, right, bottom
+                params.setMargins(8, (int) (mContext.getResources().getDimension(R.dimen.app_bar_top_padding)
+                        + mContext.getResources().getDimension(R.dimen.actionBarSize)) + 112, 8, 0); //substitute parameters for left, top, right, bottom
                 mItemView.setLayoutParams(params);
             } else {
                 RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) mItemView.getLayoutParams();
-                params.setMargins(0, 0, 0, 0); //substitute parameters for left, top, right, bottom
+                params.setMargins(8, 0, 8, 0); //substitute parameters for left, top, right, bottom
                 mItemView.setLayoutParams(params);
             }
             try {
                 mId.setText(scheduleItem.getString("lesson_number"));
-                mTime.setText(scheduleItem.getString("time_start").substring(0,5)+" - "+scheduleItem.getString("time_end").substring(0,5));
+                mTime.setText(scheduleItem.getString("time_start").substring(0, 5) + " - " + scheduleItem.getString("time_end").substring(0, 5));
                 mName.setText(scheduleItem.getString("lesson_name"));
-                mTeacher.setText(" " + scheduleItem.getString("teacher_name"));
+                mTeacher.setText(scheduleItem.getString("teacher_name"));
                 if (mTeacher.getText().length() < 3) mTeacher.setHeight(0);
                 mAuditory.setText(scheduleItem.getString("lesson_room"));
             } catch (JSONException e) {
